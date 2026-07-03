@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+    function isUserRole(role) {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function isSuperAdmin() {
+      return isUserRole('superadmin');
+    }
+
+    function isBarber() {
+      return isUserRole('barber');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+  /*
+
+51  lines of codes
+
+*/
+    }
+    
+    // --- Settings Collection Rules ---
+    match /settings/{settingId} {
+        // READ: Anyone can read store settings.
+        allow read: if true;
+        
+        // WRITE: Only superadmin can change store settings.
+        allow write: if isSuperAdmin();
+    }
+  }
+}

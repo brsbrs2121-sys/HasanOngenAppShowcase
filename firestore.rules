@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if a user has a specific role
+    function isUserRole(role) {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function isSuperAdmin() {
+      return isUserRole('superadmin');
+    }
+
+    function isBarber() {
+      return isUserRole('barber');
+    }
+    
+  /*
+
+44 lines of codes
+
+*/
+                     
+      // DELETE: Deleting appointments is not allowed to preserve history. Use 'canceled' status instead.
+      allow delete: if false;
+    }
+    
+    // --- Settings Collection Rules ---
+    match /settings/{settingId} {
+        // READ: Anyone can read store settings (opening hours, etc.)
+        allow read: if true;
+        
+        // WRITE: Only superadmin can change store settings.
+        allow write: if isSuperAdmin();
+    }
+  }
+}
