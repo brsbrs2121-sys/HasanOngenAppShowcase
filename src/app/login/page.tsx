@@ -262,7 +262,7 @@ export default function LoginPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Firebase Recaptcha sadece login sayfası için buraya render edilecek */}
+      {/* Recaptcha render */}
       <div id="recaptcha-container" />
     </div>
   );
